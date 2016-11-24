@@ -1,0 +1,100 @@
+===================
+===== Models ======
+===================
+
+Polls
+	Id
+	Question
+	Answers[] (max 4)
+	Votes[] (Votes)
+	Created by
+	Expiration Date
+
+Vote Request
+	Id
+	Poll
+	RequestTo (User)
+
+Vote
+	Id
+	Poll
+	User
+
+User
+	Id
+	PhoneNumber
+	Salt
+	LastTempConfirmationCode
+	Status (0/1) 0 for not confirmed, 1 for confirmed
+
+
+
+
+===================
+==== Functions ====
+===================
+
+POST /poll
+Create Poll
+	-> Input
+		-> Question (String)
+		-> Answers (String[]) -> Will always show multiple choice
+		-> Created by (User)
+		-> Expiration date (Time And Date) -> Can not be greater than 48 hours
+		-> Request Numbers (User[])
+	-> Process
+		-> Create Poll
+		-> Create Vote Requests
+
+POST /user
+New User
+	-> Input
+		-> PhoneNumber
+	-> Process
+		-> Create User
+		-> Generate confirmation number
+		-> Send confirmation number
+		-> Create Salt
+		-> Store Salt
+		-> Generate AuthKey
+	-> Output
+		-> Return AuthKey
+
+POST /user/confirm
+Confirm User
+	-> Input
+		-> PhoneNumber
+		-> Confirmation Code
+	-> Process
+		-> Check if code matches
+		-> Flip status to 1
+	-> Output
+		-> Confirm failure or success
+
+GET /poll
+Get Polls
+	-> Input
+		-> PhoneNumber
+	-> Process
+		-> Get Polls created by user
+		-> Get Vote Requests
+	-> Output
+		-> List of Polls
+		-> List of Vote Requests
+
+POST /vote
+Submit Vote
+	-> Input
+		-> PhoneNumber
+		-> Poll
+		-> Answer_Index
+	-> Process
+		-> Delete Vote Request
+		-> Create Vote
+		-> Add Vote to Poll
+	-> Output
+		-> Success/Failure
+
+
+
+
